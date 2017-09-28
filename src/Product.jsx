@@ -8,7 +8,7 @@ let Product = function statelessFunctionComponentClass(props) {
   
 
   let styleImg = {
-  	width: '200px',
+  	width: '250px',
     margin: '10px 5px 0px 5px'
   };
 

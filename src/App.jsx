@@ -21,7 +21,8 @@ class App extends Component {
       products: []
     }
 
-    this.textChanged = this.textChanged.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
    createImage (item) {
@@ -33,31 +34,57 @@ class App extends Component {
     return data.map(this.createImage);
     }
 
-  textChanged(event){
+  handleChange(event) {
+    var name= event.target.value
+    this.setState({inputText: name});
+  }
+
+  handleSubmit(event) {
     var self = this;
     var link:string
-    var name= event.target.value
-    this.setState({outputText: name})
-    this.setState({inputText: name})
     link=  url + this.state.inputText
-    console.log(link)
     axios.get(link)
     .then(function(response){
       var dataAPI = response.data.results
-      self.setState({products: response.data.results}) 
+       
+      dataAPI.forEach(function(element) {
+           element.thumbnail = self.convertImageSize(element.thumbnail,"big")
+      })
+      self.setState({products: dataAPI})
+      
     })
     .catch(function(error){
 
     })
+    event.preventDefault();
   }
+
+  convertImageSize(imageURL:string, type:string):string{
+    var newImageURL;
+    if(type=="small"){
+      newImageURL = imageURL.replace("-E.jpg","-I.jpg");
+    }else if(type="big"){
+      newImageURL = imageURL.replace("-I.jpg","-E.jpg");
+      console.log(newImageURL);
+    }
+    return newImageURL;
+  }
+
 
   //Creación del DOM virtual
   render(){
     return (
       <div className="container">
-      <input type='text' onChange={this.textChanged} value={this.state.inputText} />
+        <div class="w3-bar w3-green w3-border w3-padding">
+            <a href="#" class="w3-bar-item w3-button w3-mobile">Mercado search @jhonatorozco</a>
+            <form onSubmit={this.handleSubmit}>
+                <input type='text' onChange={this.handleChange} value={this.state.inputText}  
+                   class="w3-bar-item w3-input w3-white w3-mobile" placeholder="Busca tu producto.."/>
+                <input type="submit" class="w3-bar-item w3-button w3-black w3-mobile" value="Ir" />
+            </form>
+        </div>
         <br/>
-        <a>Hi {this.state.outputText} Welcome to the page! </a>
+       
         <div className="row">
           <div className="col-sm-12 text-center">
             
